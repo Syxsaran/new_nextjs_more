@@ -1,66 +1,64 @@
 "use client";
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
-const CreatePost = () => {
+export default function CreatePost() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const history = useHistory();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-  
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+  };
+
+  const handleSubmit = async () => {
     try {
+      // Check user authentication or authorization here.
+      // Send a token or authentication data to the API if necessary.
+
+      // If the user is authenticated and authorized, you can create the post.
+
       const response = await fetch('/api/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // Send a token or authentication data to the API if necessary.
         },
         body: JSON.stringify({ title, content }),
       });
-  
+
       if (response.ok) {
-        // หลังจากสร้างโพสต์เรียบร้อย
-        console.log('Post created successfully');
-        // ทำการเปลี่ยนเส้นทางหรือทำอย่างอื่นตามต้องการ
+        // Post created successfully, navigate the user to the PostsList page.
+        history.push('/posts');
       } else {
-        // กรณีเกิดข้อผิดพลาดในการสร้างโพสต์
         console.error('Failed to create post');
       }
     } catch (error) {
-      // กรณีเกิดข้อผิดพลาดในการเรียก API
       console.error('Error creating post:', error);
     }
   };
-  
 
   return (
     <div>
       <h1>Create Post</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="title">Title:</label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="content">Content:</label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-          ></textarea>
-        </div>
-        <div>
-          <button type="submit">Create Post</button>
-        </div>
-      </form>
+      <label htmlFor="title">Title:</label>
+      <input
+        type="text"
+        id="title"
+        value={title}
+        onChange={handleTitleChange}
+      />
+      <label htmlFor="content">Content:</label>
+      <textarea
+        id="content"
+        value={content}
+        onChange={handleContentChange}
+      />
+      <button onClick={handleSubmit}>Create</button>
     </div>
   );
-};
-
-export default CreatePost;
+}
